@@ -24,7 +24,7 @@ There have been previous attempts to do this, but imply the installation of cust
 
 		![speedtest polling disabled](images/speedtest-configured.png)
 
-3. Click the Home Assistant My button below to open the add-on on your Home Assistant instance.
+3. Click the My Home Assistant button below to open the add-on on your Home Assistant instance.                    [![Open your Home Assistant instance and show the add-on store.](https://my.home-assistant.io/badges/supervisor_store.svg)](https://my.home-assistant.io/redirect/supervisor_store/)
 
 4. Add this addon repository to your addon store.
 	* Click on the 3 dots button on the top right of your Addon store
