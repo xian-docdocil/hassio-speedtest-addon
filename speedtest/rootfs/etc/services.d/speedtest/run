@@ -39,15 +39,20 @@ function post_result() {
 	local data="{\"state\":$state, \"attributes\":{\"state_class\":\"measurement\",\"unit_of_measurement\":\"$unitmeasure\",\"server_name\":$servername,\"server_location\":$serverlocation,\"server_country\":$servercountry,\"server_id\":\"$serverid\",\"bytes_sent\":$bytes}}"
     fi
 
-    for i in {1..3}; do
-        if bashio::api.supervisor POST "/core/api/states/sensor.speedtest_$sensor" "$data"; then
-            bashio::log.info "$sensor updated"
+    for i in {1..5}; do
+        response=$(bashio::api.supervisor POST "/core/api/states/sensor.speedtest_$sensor" "$data")
+        http_code=$(echo "$response" | jq -r '.code // empty')
+
+        if [ "$http_code" = "200" ]; then
+            bashio::log.info "$sensor updated successfully (HTTP 200)"
             break
         else
-            bashio::log.warning "Failed to update $sensor (attempt $i)"
+            bashio::log.warning "Attempt $i failed for $sensor (HTTP ${http_code:-unknown})"
             sleep $((2 ** i))
         fi
     done
+
+
 }
 
 bashio::log.info "Starting speed test"
