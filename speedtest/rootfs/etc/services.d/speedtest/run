@@ -39,18 +39,17 @@ function post_result() {
 	local data="{\"state\":$state, \"attributes\":{\"state_class\":\"measurement\",\"unit_of_measurement\":\"$unitmeasure\",\"server_name\":$servername,\"server_location\":$serverlocation,\"server_country\":$servercountry,\"server_id\":\"$serverid\",\"bytes_sent\":$bytes}}"
     fi
 
-    for i in {1..5}; do
-        response=$(bashio::api.supervisor POST "/core/api/states/sensor.speedtest_$sensor" "$data")
-        http_code=$(echo "$response" | jq -r '.code // empty')
-
-        if [ "$http_code" = "200" ]; then
-            bashio::log.info "$sensor updated successfully (HTTP 200)"
-            break
-        else
-            bashio::log.warning "Attempt $i failed for $sensor (HTTP ${http_code:-unknown})"
-            sleep $((2 ** i))
-        fi
-    done
+for i in {1..5}; do
+    output=$(bashio::api.supervisor POST "/core/api/states/sensor.speedtest_$sensor" "$data" 2>&1)
+    last_code=$(echo "$output" | grep "API HTTP Response code:" | tail -n1 | awk '{print $NF}')
+    if [ "$last_code" = "200" ]; then
+        bashio::log.info "$sensor updated successfully (HTTP 200)"
+        break
+    else
+        bashio::log.warning "Attempt $i failed for $sensor (HTTP ${last_code:-unknown})"
+        sleep $((2 ** i))
+    fi
+done
 
 
 }
