@@ -39,24 +39,9 @@ function post_result() {
 	local data="{\"state\":$state, \"attributes\":{\"state_class\":\"measurement\",\"unit_of_measurement\":\"$unitmeasure\",\"server_name\":$servername,\"server_location\":$serverlocation,\"server_country\":$servercountry,\"server_id\":\"$serverid\",\"bytes_sent\":$bytes}}"
     fi
 
-    for i in {1..5}; do
-        response=$(curl -s -w "%{http_code}" -o /tmp/speedtest_response.json \
-            -X POST \
-            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "$data" \
-            http://supervisor/core/api/states/sensor.speedtest_$sensor)
+    bashio::api.supervisor POST "/core/api/states/sensor.speedtest_$sensor" "$data"
 
-        if [ "$response" = "200" ]; then
-            bashio::log.info "$sensor updated successfully (HTTP 200)"
-            break
-        else
-            bashio::log.warning "Attempt $i failed for $sensor (HTTP $response)"
-            sleep $((2 ** i))
-        fi
-    done
-
-
+    bashio::log.info "$sensor updated"
 }
 
 bashio::log.info "Starting speed test"

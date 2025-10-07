@@ -24,4 +24,4 @@ schema:
   debug: bool?
   print_closest_servers: bool?
 url: https://github.com/MrSuicideParrot/hassio-speedtest-addon
-#image: ghcr.io/mrsuicideparrot/hassio-speedtest-addon-{arch}
+image: ghcr.io/mrsuicideparrot/hassio-speedtest-addon-{arch}
